@@ -89,7 +89,7 @@ combatAbilities.sword = {
 }
 combatAbilities.Punch = {
    name: &quot;Punch&quot;,
-   damage: 999
+   damage: 50
 }
 
 introArmour = new Monster();
@@ -1001,7 +1001,7 @@ The *filthy ducks* have been a plague on the kingdom since time immemorial. They
 
 [[Enter the Boiler Room]]</tw-passagedata><tw-passagedata pid="25" name="Enter the Boiler Room" tags="" position="211,899" size="100,100">As you enter the room, you see the perfect place to put your trap. This room is secluded, no-one will come in here before your trap goes off. And it’s deep under the hospital, so taking this area out will cause the rest of it to collapse.
 
-[[Plant the Bomb]]</tw-passagedata><tw-passagedata pid="26" name="Plant the Bomb" tags="" position="211,1049" size="100,100">The bomb is planted. You make your way out of the hospital and wait for the Timer to go off. You laugh as son as you see the mushroom cloud. 
+[[Plant the Bomb]]</tw-passagedata><tw-passagedata pid="26" name="Plant the Bomb" tags="" position="211,1049" size="100,100">The bomb is planted. You make your way out of the hospital and wait for the Timer to go off. You laugh as soon as you see the mushroom cloud. 
 
 &lt;% s.HasBlownUpHospital = 1 %&gt;
 
@@ -1071,7 +1071,7 @@ Pat.EXP = 0;
 &lt;% currentFight = new initiateCombat(allies, enemies); %&gt;
 &lt;% //xpAward = addXP(enemies) %&gt;
 
-&lt;% print(startFight(allies, enemies, &quot;FightTheBeast&quot;)) %&gt;</tw-passagedata><tw-passagedata pid="30" name="FightTheBeast" tags="" position="360,899" size="100,100">You fought long and hard, but you’re glad you were able to overcome him. He look at you as he dies. “Why are you doing this? They...they’re just hatchlings…”
+&lt;% print(startFight(allies, enemies, &quot;FightTheBeast&quot;)) %&gt;</tw-passagedata><tw-passagedata pid="30" name="FightTheBeast" tags="" position="351,891" size="100,100">You fought long and hard, but you’re glad you were able to overcome him. He look at you as he dies. “Why are you doing this? They...they’re just hatchlings…”
 
 Are we the baddies? Doesn’t matter. It’s too late to change career paths.
 
@@ -1109,7 +1109,7 @@ combatAbilities.Glock = {
 }
 
 introArmour = new Monster();
-introArmour.race = &quot;Beast&quot;;
+introArmour.race = &quot;President Duck&quot;;
 introArmour.maxHP = 50;
 introArmour.health = 50;
 introArmour.attack = 10;
