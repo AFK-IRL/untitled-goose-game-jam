@@ -17,6 +17,7 @@ body, tw-story
   background-color: #709e7a;
   color: #ffffff;
   font-family: 'VulfMono';
+  font-size: 16px;
 }
 
 .message-box {
@@ -64,7 +65,7 @@ body.widen #passage {
 //		height:15px;
 //		width: 100;
 }
-</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="Start" tags="" position="663,272" size="100,100">[[Let&#39;s eat em!|Start2]]
+</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="Start" tags="" position="663,270" size="100,100">You see a big ugly duck in front of you. He&#39;s just standing there, minding his own business. Fuck him up!
 
 &lt;% story.passage(&quot;stats&quot;).render() %&gt;
 &lt;% story.passage(&quot;abilities&quot;).render() %&gt;
@@ -73,7 +74,48 @@ body.widen #passage {
 &lt;% story.passage(&quot;enemy-behavior&quot;).render() %&gt;
 &lt;% story.passage(&quot;miscCombat&quot;).render() %&gt;
 &lt;% story.passage(&quot;damage-calculations&quot;).render() %&gt;
-&lt;% story.passage(&quot;status-box&quot;).render() %&gt;</tw-passagedata><tw-passagedata pid="2" name="combat-object" tags="" position="1087.8000030517578,563" size="100,100">&lt;%
+&lt;% story.passage(&quot;status-box&quot;).render() %&gt;
+
+&lt;% returnFromCombat = &quot;sweetVictory&quot; %&gt;
+&lt;% gameOverScreen = &quot;badEnd&quot; %&gt;
+
+&lt;!-- [[Start2]] --&gt;
+
+&lt;%
+combatAbilities.sword = {
+   name: &quot;sword&quot;,
+   damage: 3,
+   damageType: &quot;slashing&quot;
+}
+combatAbilities.Punch = {
+   name: &quot;Punch&quot;,
+   damage: 999
+}
+
+introArmour = new Monster();
+introArmour.race = &quot;Random Thug Duck&quot;;
+introArmour.maxHP = 30;
+introArmour.health = 30;
+introArmour.attack = 10;
+introArmour.abilities = [combatAbilities.Punch];
+introArmour.XP = 5;
+
+Pat = new Monster();
+Pat.race = &quot;Prince Honk&quot;;
+Pat.maxHP = 20;
+Pat.health = 20;
+Pat.attack = 2;
+Pat.abilities = [combatAbilities.Punch];
+Pat.EXP = 0;
+%&gt;
+
+&lt;% allies = [Pat] %&gt;
+&lt;% enemies = [introArmour] %&gt;
+
+&lt;% currentFight = new initiateCombat(allies, enemies); %&gt;
+&lt;% //xpAward = addXP(enemies) %&gt;
+
+&lt;% print(startFight(allies, enemies, &quot;sweetVictory&quot;)) %&gt;</tw-passagedata><tw-passagedata pid="2" name="combat-object" tags="" position="1087,563" size="100,100">&lt;%
 initiateCombat = function(allies, enemies){
    this.allies = allies;
    this.enemies = enemies;
@@ -159,7 +201,7 @@ initiateCombat.prototype.takeAction = function(){
       this.abilityScreen.addMessage(setLink);
    }
 };
-%&gt;</tw-passagedata><tw-passagedata pid="3" name="combat" tags="" position="1029.8000030517578,133" size="100,100">&lt;!-- Anything in this section is just for debugging purposes --&gt;
+%&gt;</tw-passagedata><tw-passagedata pid="3" name="combat" tags="" position="1029,133" size="100,100">&lt;!-- Anything in this section is just for debugging purposes --&gt;
 
 
 &lt;!-- check status effects before updating UI --&gt;
@@ -215,7 +257,7 @@ else{
    currentFight.currentActor().needsTarget = 0;
 }
 
-%&gt;</tw-passagedata><tw-passagedata pid="4" name="select-target" tags="" position="943.8000030517578,523" size="100,100">&lt;!-- select who to attack [[combat]] --&gt;
+%&gt;</tw-passagedata><tw-passagedata pid="4" name="select-target" tags="" position="943,523" size="100,100">&lt;!-- select who to attack [[combat]] --&gt;
 &lt;%
 
 print(&quot;&quot; + currentFight.currentActor().race + &quot; will use &quot; + chosenAbility.name + &quot; on which target?&lt;br&gt;&quot;);
@@ -223,7 +265,7 @@ print(&quot;&quot; + currentFight.currentActor().race + &quot; will use &quot; +
 currentFight.targetScreen.selectTarget(currentFight.enemies, currentFight.allies, chosenAbility);
 print(currentFight.targetScreen.displayScreen());
 
-%&gt;</tw-passagedata><tw-passagedata pid="5" name="stats" tags="" position="1202.7999877929688,0" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="5" name="stats" tags="" position="1202,0" size="100,100">&lt;%
 Monster = function(){
 	this.abilities = [combatAbilities.attack];
         this.magic = 0;
@@ -356,7 +398,7 @@ monsters.DireWolf = function(){
 }
 monsters.DireWolf.prototype = Object.create(Monster.prototype);
 
-%&gt;</tw-passagedata><tw-passagedata pid="6" name="abilities" tags="" position="1198.7999877929688,124.4000015258789" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="6" name="abilities" tags="" position="1198,124" size="100,100">&lt;%
 combatAbilities = {};
 
 // returns a soft link for an ability
@@ -404,7 +446,7 @@ combatAbilities.roar = {
 
 // generic weak fire attack
 combatAbilities.flame = {
-   name: &quot;flame&quot;,
+   name: &quot;flamethrow&quot;,
    damage: 0,
    damageType: [&quot;fire&quot;]
 }
@@ -437,14 +479,18 @@ combatAbilities.SewerSong = {
    }
 }
 
-%&gt;</tw-passagedata><tw-passagedata pid="7" name="twine-functionality" tags="script" position="1196.7999877929688,249" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="7" name="twine-functionality" tags="script" position="1196,249" size="100,100">&lt;%
+s.HasBurnedDownOrphanage = 0;
+s.HasBlownUpHospital = 0;
+s.HasPoisonedElders = 0;
+
 // create a setter link
 setterLink = function(display, target, script){
    script = script.replace(/&#39;/g, &quot;\&quot;&quot;);
 
    return &quot;&lt;a onclick=&#39;&quot; +script + &quot;&#39; href=&#39;javascript:void(0)&#39; data-passage=&quot; + target + &quot;&gt;&quot; + display + &quot;&lt;/a&gt;&quot;
 }
-%&gt;</tw-passagedata><tw-passagedata pid="8" name="interface_scripts" tags="" position="1323.7999877929688,257" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="8" name="interface_scripts" tags="" position="1323,257" size="100,100">&lt;%
 messageBoxes = {};
 
 messageBoxes.MessageBox = function(){
@@ -526,7 +572,7 @@ messageBoxes.MessageBox.prototype.selectTarget = function(enemies, allies, abili
    }
 }
 
-%&gt;</tw-passagedata><tw-passagedata pid="9" name="damage-calculations" tags="" position="1586.7999877929688,226" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="9" name="damage-calculations" tags="" position="1586,226" size="100,100">&lt;%
 // apply damage
 Monster.prototype.applyDamage = function(ability, target){
    var damage = this.randomize(ability.damage, this.attack);
@@ -575,7 +621,7 @@ Monster.prototype.healHP = function(magnitude){
       messageBoxes.messageScreen.addMessage(this.race + &quot; healed &quot; + magnitude + &quot; damage.&quot;);
    }
 }
-%&gt;</tw-passagedata><tw-passagedata pid="10" name="combat_functions" tags="" position="1327.7999877929688,369" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="10" name="combat_functions" tags="" position="1327,369" size="100,100">&lt;%
 //distribute XP
 awardXP = function(party, XP){
    XP = Math.floor(XP/party.length);
@@ -644,7 +690,7 @@ Monster.prototype.checkStatusEffects = function(){
    };
 }
 
-%&gt;</tw-passagedata><tw-passagedata pid="11" name="enemy-behavior" tags="" position="1194.7999877929688,374" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="11" name="enemy-behavior" tags="" position="1194,374" size="100,100">&lt;%
 
 // enemy takes an action
 Monster.prototype.autoAction = function(team, targets){
@@ -688,7 +734,7 @@ Monster.prototype.autoSelectTarget = function(ability, targets){
    else { return [validTargets[Math.floor(Math.random()*validTargets.length)]]; }
 }
 
-%&gt;</tw-passagedata><tw-passagedata pid="12" name="status-box" tags="" position="1812.7999877929688,253" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="12" name="status-box" tags="" position="1812,253" size="100,100">&lt;%
 // alternative method returns hp bar for monster. Not currently used. May use later to add animation
 Monster.prototype.hpBar1 = function(){
    var currentHP = Math.floor(this.health/this.maxHP*100);
@@ -741,7 +787,7 @@ messageBoxes.MessageBox.prototype.printEnemyStatus = function(enemies){
    return output;
 }
 
-%&gt;</tw-passagedata><tw-passagedata pid="13" name="miscCombat" tags="" position="1932.7999877929688,253" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="13" name="miscCombat" tags="" position="1932,253" size="100,100">&lt;%
 // fully heals a combatant
 Monster.prototype.fullHeal = function(){
    this.health = this.maxHP;
@@ -757,7 +803,7 @@ Monster.prototype.partyFullHeal = function(party){
    }
 }
 
-%&gt;</tw-passagedata><tw-passagedata pid="14" name="apply-effect" tags="" position="2052.7999877929688,253" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="14" name="apply-effect" tags="" position="2052,253" size="100,100">&lt;%
 
 Monster.prototype.applyEffectSingle = function(ability, target){
    // if target is dead, skip
@@ -863,7 +909,7 @@ Monster.prototype.applyCharm = function(ability, target){
    }
 }
 
-%&gt;</tw-passagedata><tw-passagedata pid="15" name="Hub" tags="" position="1477.7999877929688,377" size="100,100">/% UI that always shows %/ &lt;br&gt;
+%&gt;</tw-passagedata><tw-passagedata pid="15" name="Hub" tags="" position="1477,377" size="100,100">/% UI that always shows %/ &lt;br&gt;
 You have &lt;%= player.EXP %&gt; experience&lt;br&gt;
 
 &lt;% 
@@ -886,7 +932,7 @@ else{
    + setterLink(&#39;fight a goblin&#39;, &#39;setFight&#39;, &#39;enemy = new monsters.Goblin()&#39;) + &quot;&lt;br&gt;&quot;
    + setterLink(&#39;fight a hobgoblin&#39;, &#39;setFight&#39;, &#39;enemy = new monsters.Hobgoblin()&#39;));
 }
-%&gt;</tw-passagedata><tw-passagedata pid="16" name="UpgradeScreen" tags="" position="1529.8000030517578,527" size="100,100">&lt;%
+%&gt;</tw-passagedata><tw-passagedata pid="16" name="UpgradeScreen" tags="" position="1529,527" size="100,100">&lt;%
 // create setter link for each upgrade option of current race
 for(i = 0; i&lt;player.upgrades.length; i++){
    print(setterLink(&quot;Upgrade to &quot; + player.upgrades[i] + &quot;&lt;br&gt;&quot;, &quot;Hub&quot;, &quot;player = new monsters.&quot; + player.upgrades[i] + &quot;(); player.EXP = 0&quot;))
@@ -901,13 +947,13 @@ combatAbilities.sword = {
    damage: 3,
    damageType: &quot;slashing&quot;
 }
-combatAbilities.punch = {
-   name: &quot;punch&quot;,
-   damage: 0
+combatAbilities.Punch = {
+   name: &quot;Punch&quot;,
+   damage: 999
 }
 
 introArmour = new Monster();
-introArmour.race = &quot;Armour&quot;;
+introArmour.race = &quot;Random Thug Duck&quot;;
 introArmour.maxHP = 30;
 introArmour.health = 30;
 introArmour.attack = 10;
@@ -915,7 +961,7 @@ introArmour.abilities = [combatAbilities.punch];
 introArmour.XP = 5;
 
 Pat = new Monster();
-Pat.race = &quot;Pat&quot;;
+Pat.race = &quot;Prince Honk&quot;;
 Pat.maxHP = 20;
 Pat.health = 20;
 Pat.attack = 2;
@@ -929,11 +975,163 @@ Pat.EXP = 0;
 &lt;% currentFight = new initiateCombat(allies, enemies); %&gt;
 &lt;% //xpAward = addXP(enemies) %&gt;
 
-&lt;% print(startFight(allies, enemies, &quot;pitifulDefeat&quot;)) %&gt;</tw-passagedata><tw-passagedata pid="18" name="Start1" tags="" position="714.7999877929688,100" size="100,100">[[Killemall|Start]]
+&lt;% print(startFight(allies, enemies, &quot;pitifulDefeat&quot;)) %&gt;</tw-passagedata><tw-passagedata pid="18" name="Start1" tags="" position="714,100" size="100,100">You are a Goose. A member of the Honk dynasty and crown prince of the realm. Before you stands your realm, in all its glory.
+
+You find yourself in your throne room. You are surrounded by oil paintings of each ruler before you, ending with your father. Your ancestors have spent centuries keeping the *filthy duck population* in check.
+
+The *filthy ducks* have been a plague on the kingdom since time immemorial. They are a collectively stupid race full of monstrous cratures with personality defiencies and a lust for violence. You have been chosen as the **purifier.** You will be the one to rid the world of this scourge.
+
+[[Go Out|Start]]
 
 &lt;% story.passage(&quot;twine-functionality&quot;).render() %&gt;
 &lt;% story.passage(&quot;interface_scripts&quot;).render() %&gt;
-&lt;% story.passage(&quot;combat-object&quot;).render() %&gt;</tw-passagedata></tw-storydata>
+&lt;% story.passage(&quot;combat-object&quot;).render() %&gt;
+</tw-passagedata><tw-passagedata pid="19" name="sweetVictory" tags="" position="349,199" size="100,100">Congratulations. You’ve slain your first *filthy duck*. One less beast remains in this world. As he falls to the ground, you see a **flamethrower** fall out of his pocket. But there are more. If only there was a way to kill more at once….
+
+[[Collect Flamethrower]]</tw-passagedata><tw-passagedata pid="20" name="Collect Flamethrower" tags="" position="349,323" size="100,100">Perfect. A flamethrower will speed up the slaughter exponentially. Let’s burn these monsters.
+
+[[Where do you wanna go next?]]
+</tw-passagedata><tw-passagedata pid="21" name="Barbaric Duck Hospital" tags="" position="202,599" size="100,100">You find yourself in front of the Duck Hospital, the greatest achievement in modern Duck medicine. Ducks come from far and wide to be healed here, and pay nothing due to their healthcare system. The entire idea of it makes your stomach churn. Despicable.
+
+[[Enter the Hospital]]</tw-passagedata><tw-passagedata pid="22" name="Filthy Duck Orphanage" tags="" position="353,599" size="100,100"> We have to find a way to stop these things at the source, a way to end them before they begin...
+
+[[Go To Duck Orphanage]]</tw-passagedata><tw-passagedata pid="23" name="Sickening Duck Retirement Home" tags="" position="511,599" size="100,100">You enter the Retirement Home. The first thing you notice is the smell. These ducks are long past their expiration date. 
+
+[[Wow, these ducks sure are old]]</tw-passagedata><tw-passagedata pid="24" name="Enter the Hospital" tags="" position="211,749" size="100,100">As you enter the building, you’re greeted by the kind receptionist: “Welcome to Duck Hospital! How can I help you?” Your eyes narrow. How dare she talk to you. But you don’t lash out. You have a plan. You tell her you’re here to perform some maintenance, and ask to see the boiler room.
+
+[[Enter the Boiler Room]]</tw-passagedata><tw-passagedata pid="25" name="Enter the Boiler Room" tags="" position="211,899" size="100,100">As you enter the room, you see the perfect place to put your trap. This room is secluded, no-one will come in here before your trap goes off. And it’s deep under the hospital, so taking this area out will cause the rest of it to collapse.
+
+[[Plant the Bomb]]</tw-passagedata><tw-passagedata pid="26" name="Plant the Bomb" tags="" position="211,1049" size="100,100">The bomb is planted. You make your way out of the hospital and wait for the Timer to go off. You laugh as son as you see the mushroom cloud. 
+
+&lt;% s.HasBlownUpHospital = 1 %&gt;
+
+
+[[continue|Where do you wanna go next?]] </tw-passagedata><tw-passagedata pid="27" name="Where do you wanna go next?" tags="" position="351,448" size="100,100">Where do you wanna go next?
+
+&lt;% if (s.HasBurnedDownOrphanage == 0){%&gt;
+	[[Filthy Duck Orphanage]]
+&lt;% } %&gt;
+
+&lt;br&gt;
+
+&lt;% if (s.HasBlownUpHospital == 0){%&gt;
+	[[Barbaric Duck Hospital]]
+&lt;% } %&gt;
+
+&lt;br&gt;
+
+&lt;% if (s.HasPoisonedElders == 0){%&gt;
+	[[Sickening Duck Retirement Home]]
+&lt;% } %&gt;
+
+&lt;br&gt;
+
+&lt;% if (s.HasPoisonedElders == 1 &amp;&amp; s.HasBlownUpHospital == 1 &amp;&amp; s.HasBurnedDownOrphanage == 1){ %&gt;
+	[[Duck Capital]]&#96;
+&lt;% } %&gt;</tw-passagedata><tw-passagedata pid="28" name="badEnd" tags="" position="543,275" size="100,100">The scourge of the Ducks lives on, but you will not. Nice job. 
+
+[[Try again?|Start1]]</tw-passagedata><tw-passagedata pid="29" name="Go To Duck Orphanage" tags="" position="346,750" size="100,100">You look into the windows of the duck orphanage. The sight of these young monsters sickens you. Your finger twitches over the trigger. You know what you must do. But you suddenly see a large duck before you.
+
+&lt;% returnFromCombat = &quot;FightTheBeast&quot; %&gt;
+&lt;% gameOverScreen = &quot;badEnd&quot; %&gt;
+
+&lt;!-- [[Start2]] --&gt;
+
+&lt;%
+combatAbilities.Devour = {
+   name: &quot;Devour&quot;,
+   damage: 3,
+   damageType: &quot;slashing&quot;
+}
+combatAbilities.Flamethrow = {
+   name: &quot;Flamethrow&quot;,
+   damage: 50
+}
+
+introArmour = new Monster();
+introArmour.race = &quot;Beast&quot;;
+introArmour.maxHP = 50;
+introArmour.health = 50;
+introArmour.attack = 10;
+introArmour.abilities = [combatAbilities.Devour];
+introArmour.XP = 5;
+
+Pat = new Monster();
+Pat.race = &quot;Prince Honk&quot;;
+Pat.maxHP = 20;
+Pat.health = 20;
+Pat.attack = 2;
+Pat.abilities = [combatAbilities.Flamethrow];
+Pat.EXP = 0;
+%&gt;
+
+&lt;% allies = [Pat] %&gt;
+&lt;% enemies = [introArmour] %&gt;
+
+&lt;% currentFight = new initiateCombat(allies, enemies); %&gt;
+&lt;% //xpAward = addXP(enemies) %&gt;
+
+&lt;% print(startFight(allies, enemies, &quot;FightTheBeast&quot;)) %&gt;</tw-passagedata><tw-passagedata pid="30" name="FightTheBeast" tags="" position="360,899" size="100,100">You fought long and hard, but you’re glad you were able to overcome him. He look at you as he dies. “Why are you doing this? They...they’re just hatchlings…”
+
+Are we the baddies? Doesn’t matter. It’s too late to change career paths.
+
+[[Lock the doors and then burn down the orphanage]]</tw-passagedata><tw-passagedata pid="31" name="Lock the doors and then burn down the orphanage" tags="" position="360,1049" size="100,100">Great job! The sounds of honking grow quite a bit louder for a while, and are then followed by a deafening silence. The orphanage is now nothing but ashes and burnt remains of orphans.
+
+&lt;% s.HasBurnedDownOrphanage = 1 %&gt;
+
+[[continue|Where do you wanna go next?]] </tw-passagedata><tw-passagedata pid="32" name="Wow, these ducks sure are old" tags="" position="511,749" size="100,100">You are approached by one of the orderlies: “Welcome to Duck Retirement Home! Are you here to visit?” 
+
+[[Actually I’m here from the pharmacy. There’s a new medication we just got approved that will greatly improve the quality of life for these old Ducks!|Medicine Room]]
+</tw-passagedata><tw-passagedata pid="33" name="Medicine Room" tags="" position="511,899" size="100,100">You are led to where the medication is stored. As soon as the overly trusting orderly leaves, you get right to work. Arsenic, Ricin, Batrachotoxin, Cyanide and Polonium, you add every poison you can find to the medications. After these wastes of oxygen take their medicine tomorrow, they’ll be in for a big surprise.
+
+[[Make your way home]]</tw-passagedata><tw-passagedata pid="34" name="Make your way home" tags="" position="511,1049" size="100,100">You make your way back to the castle. You sleep in your big comfy bed until morning. As you eat your breakfast, your turn on the TV and see that the entirety of a Duck Retirement home has been found dead, all from the effects of various toxins. Wonder how that happened.
+
+&lt;% s.HasPoisonedElders = 1 %&gt;
+
+[[continue|Where do you wanna go next?]]</tw-passagedata><tw-passagedata pid="35" name="Duck Capital" tags="" position="780,763" size="100,100">You make your way to the duck capital. You enter on the pretence of peace talks with the duck president, Donald Duck. You enter his office and sit down.
+
+[[Pull out a glock]]</tw-passagedata><tw-passagedata pid="36" name="Pull out a glock" tags="" position="780,912" size="100,100">&quot;What are you doing!?&quot;&quot; Demands Donald. How dare you threaten me?!?!
+
+&lt;% returnFromCombat = &quot;HeAttacks&quot; %&gt;
+&lt;% gameOverScreen = &quot;badEnd&quot; %&gt;
+
+&lt;!-- [[Start2]] --&gt;
+
+&lt;%
+combatAbilities.Missile = {
+   name: &quot;Missile&quot;,
+   damage: 3,
+   damageType: &quot;slashing&quot;
+}
+combatAbilities.Glock = {
+   name: &quot;Glock&quot;,
+   damage: 50
+}
+
+introArmour = new Monster();
+introArmour.race = &quot;Beast&quot;;
+introArmour.maxHP = 50;
+introArmour.health = 50;
+introArmour.attack = 10;
+introArmour.abilities = [combatAbilities.Missile];
+introArmour.XP = 5;
+
+Pat = new Monster();
+Pat.race = &quot;Prince Honk&quot;;
+Pat.maxHP = 20;
+Pat.health = 20;
+Pat.attack = 2;
+Pat.abilities = [combatAbilities.Glock];
+Pat.EXP = 0;
+%&gt;
+
+&lt;% allies = [Pat] %&gt;
+&lt;% enemies = [introArmour] %&gt;
+
+&lt;% currentFight = new initiateCombat(allies, enemies); %&gt;
+&lt;% //xpAward = addXP(enemies) %&gt;
+
+&lt;% print(startFight(allies, enemies, &quot;HeAttacks&quot;)) %&gt;</tw-passagedata><tw-passagedata pid="37" name="HeAttacks" tags="" position="780,1063" size="100,100">[[Victory]]</tw-passagedata><tw-passagedata pid="38" name="Victory" tags="" position="780,1211" size="100,100">Donald Duck lays dead at your feet. You&#39;ve taken out the leader of the free duck world. Congratulations. You monster. </tw-passagedata></tw-storydata>
 		<script>
 		(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";window.either=function(){for(var n=[],t=0;t<arguments.length;t++)if(arguments[t]instanceof Array)for(var r=0;r<arguments[t].length;r++)n.push(arguments[t][r]);else n.push(arguments[t]);return n[_.random(n.length-1)]},window.hasVisited=function(){var n=null;if(1==arguments.length)return null!=(n=window.story.passage(arguments[0]))&&window.story.history.includes(n.id);for(var t=0;t<arguments.length;t++)if(null==(n=window.story.passage(arguments[t]))||0==window.story.history.includes(n.id))return!1;return!0},window.visited=function(){for(var n=[],t=[],r=0;r<arguments.length;r++){var e=window.story.passage(arguments[r]);null!=e&&(t=window.story.history.filter(function(n){return n==e.id})),n.push(t.length)}return Math.min.apply(Math,n)},window.renderToSelector=function(n,t){var r=window.story.passage(t);null!=r&&$(n).html(r.render())},window.getStyles=function(){return $.when.apply($,$.map(arguments,function(n){return $.get(n,function(n){$("<style>"+n+"</style>").appendTo("head")})}))};
